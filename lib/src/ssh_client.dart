@@ -170,8 +170,8 @@ class SSHClient {
     );
 
     _transport.done.then(
-      (_) => _handleTransportClosed(),
-      onError: (_) => _handleTransportClosed(),
+      (_) => _handleTransportClosed(null),
+      onError: (e) => _handleTransportClosed(e),
     );
 
     _authenticated.future.catchError(
@@ -473,11 +473,12 @@ class SSHClient {
     _requestAuthentication();
   }
 
-  void _handleTransportClosed() {
+
+  void _handleTransportClosed(SSHError? error) {
     printDebug?.call('SSHClient._onTransportClosed');
     if (!_authenticated.isCompleted) {
       _authenticated.completeError(
-        SSHAuthAbortError('Connection closed before authentication'),
+        SSHAuthAbortError('Connection closed before authentication', error)
       );
     }
     _keepAlive?.stop();
