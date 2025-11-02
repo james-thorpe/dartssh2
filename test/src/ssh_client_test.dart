@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dartssh2/dartssh2.dart';
 import 'package:test/test.dart';
 
@@ -137,6 +139,7 @@ void main() {
         fail('should have thrown');
       } catch (e) {
         expect(e, isA<SSHAuthAbortError>());
+        expect((e as SSHAuthAbortError).reason!, isA<SSHSocketError>());
       }
 
       client.close();
